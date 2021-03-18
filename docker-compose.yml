@@ -2,26 +2,25 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:5.6
-    container_name: docker-mysql
-    environment:
-      MYSQL_DATABASE: database_name
-      MYSQL_USER: my_username
-      MYSQL_PASSWORD: my_password
-      MYSQL_ROOT_PASSWORD: my_password
+    image: "mysql-image"
+    build: "./sql-db"
+    restart: always
     ports:
       - "3306:3306"
-    restart: always
+    networks: 
+     - app-network
   web:
-    image: php:7.3-apache
-    container_name: docker-php
-    build: .
-    command: chown -R 777 /var/www/html
-    command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-    command: composer install
+    image: "php-image"
+    build: "./phppr"
+    restart: always
     ports:
-      - "80:80"
-    volumes:
-      - ./www:/var/www/html
-    links:
-      - mysql
+      - "8000:8000"
+    networks: 
+      - app-network
+  
+  #Docker networks
+networks: 
+  app-network:
+    driver: bridge
+
+  
